@@ -1,5 +1,5 @@
-//  dailyTrendsApi 返回的数据结构如下
  /**
+  * dailyTrendsApi 返回的数据结构如下
   * {
       default : [Object]{
         trendingSearchesDays : [Array]   
@@ -26,7 +26,25 @@
   * 
   */
 
-
+/**
+ * @description 获取google daily trends
+ * @description  有效数据 -> default.trendingSearchesDays[0].trendingSearches.title.query    trendingSearches.relatedQueries[0].query
+ * @description trendingSearchesDays、relatedQueries为数组需要进行遍历，
+ */
 
 const utils = require('../utils/index')
+const dailyTrendsList = []
+
+
+utils.getDailyTrends()
+      .then(res => {
+        res = JSON.parse(res)
+        console.log(res.default)
+      })
+
+
+      module.exports = dailyTrendsList
+
+
+
 

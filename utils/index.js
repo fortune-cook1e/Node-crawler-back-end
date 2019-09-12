@@ -1,7 +1,8 @@
 const googleTrends = require('google-trends-api')
 
-const dailyTrendsList = []
 
+
+// 获取对应日期的Trends
 function getDailyTrends() {
   return new Promise((resolve,reject) => {
     googleTrends.dailyTrends({
