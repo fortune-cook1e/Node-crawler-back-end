@@ -8,7 +8,7 @@ const utils = require('../utils/index')
 const inKeys = require('../keys/inkeys')
 const usKeys = require('../keys/uskeys')
 
-const relatedPath = utils.pathResolve('../outputFiles/related/usCsv.csv')
+const relatedPath = utils.pathResolve('../outputFiles/related/usCsv.csv')   // 可修改
 const relatedWriteStream = fs.createWriteStream(relatedPath)
 
 const url = 'http://info.squeener.com/api/queries'
@@ -19,12 +19,11 @@ let queryList = []
 let readTimes = 0
 let successTimes = 0
 let failureTimes = 0
-let total = undefined
+let total = 0
 
 router.get('/',(req,res,next) => {
-  // res.send(inKeys)
 
-  total = keysList.length
+  total += keysList.length
   keysList.forEach(key => {
     superAgent.get(url+'?keyword='+key)
       .then(res => {

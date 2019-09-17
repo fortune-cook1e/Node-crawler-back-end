@@ -37,6 +37,7 @@ const router = express.Router()
 const fs = require('fs')
 const os = require('os')
 const superAgent = require('superagent')
+const path = require('path')
 
 const utils = require('../utils/index')
 const dailyTrendsList = []  // 数组对象存储 
@@ -45,24 +46,37 @@ const dailyRelatedList = []  // 数组对象存储
 const url = 'http://info.squeener.com/api/queries'
 
 
-const outputDaily = utils.pathResolve('../outputFiles/daily/8.1~8.31.csv')  // 可修改
-const dailyWriteStream = fs.createWriteStream(outputDaily)
-
-const outputRelated = utils.pathResolve('../outputFiles/related/8.1~8.31-related.csv') // 可修改
-const relatedWriteStream = fs.createWriteStream(outputRelated)
-
 
 
 router.get('/',(req,res,next) => {
-  let readTimes = 0
-  let successTimes = 0
-  let failureTimes = 0
-  let totalTimes = undefined
-  let totalLength = undefined
+  res.render('daily/daily')
+  console.log(path.join(__dirname))
+})
 
+
+router.post('/',(req,res,next) => {
+  let readTimes = 0  // 读取次数
+  let successTimes = 0 // 成功次数
+  let failureTimes = 0  // 失败次数
+  let totalTimes = 0  // 总共需要读取的次数
+  let totalLength = 0
+
+  let beginDate = req.body.beginDate  // 开始日期
+  let endDate = req.body.endDate  // 结束日期
+
+  const outputDaily = utils.pathResolve(`../outputFiles/daily/${beginDate}~${endDate}.csv`)  // 可修改
+  const dailyWriteStream = fs.createWriteStream(outputDaily)
+
+
+    // 可分2个文件
+  // const outputRelated = utils.pathResolve(`../outputFiles/related/${beginDate}~${endDate}-related.csv`) // 可修改
+  // const relatedWriteStream = fs.createWriteStream(outputRelated)
+
+
+  
 
   // 根据日期修改来获取对应 query
-  utils.getRangeDate('2019-08-01','2019-08-31')
+  utils.getRangeDate(beginDate,endDate)
     .then(dateArray => {
         dateArray.forEach(date => {
           utils.getDailyTrends(date,'US')
@@ -88,43 +102,53 @@ router.get('/',(req,res,next) => {
                 })
               })
             })
-           
+
             
             // 获取daily相关词
-            totalTimes = dailyTrendsList.length
-            console.log('一共有:'+totalTimes+'个item')
+            totalTimes += dailyTrendsList.length
+            console.log('一共有:'+totalTimes+'个待查询相关关键词的item')
             dailyTrendsList.forEach(item => {
               superAgent.get(url+'?keyword='+item)
-                .then(res => {
+                .then(response => {
                   readTimes++
                   successTimes++
                   console.log('read:'+readTimes)
                   console.log('total:'+totalTimes)
-                  const response = JSON.parse(res.text)
+                   response = JSON.parse(response.text)
                   if(response.default) {
                     let list = response.default.rankedList[0].rankedKeyword
                     list.forEach(item => {
                       // console.log(item.query)
                       dailyRelatedList.push(item.query)
-                      relatedWriteStream.write(item.query + os.EOL)
+                      // 修改这个stream 则可以得到2个文件
+                      dailyWriteStream.write(item.query + os.EOL)
                     })
                   }
                   //检测是否读完
-                  // if(readTimes === totalTimes) {
-                  //   console.log('文件获取数据完毕')
-                  //   console.log('成功条目数为:'+successTimes)
-                  //   console.log('失败条目总数为:'+failureTimes)
-                  // }
+                  if(readTimes === totalTimes) {
+                    console.log('文件获取数据完毕')
+                    console.log('成功条目数为:'+successTimes)
+                    console.log('失败条目总数为:'+failureTimes)
+                    
+                    // download 默认下载为最后一个
+                    // 所以文件合并
+                    const file = utils.pathResolve(`../outputFiles/daily/${beginDate}~${endDate}.csv`)
+                    res.download(file)
+                  }
                 }).catch(e => {
                   readTimes++
                   failureTimes++
                   console.log('read:'+readTimes)
                   console.log('total:'+totalTimes)
-                  // if(readTimes === totalTimes) {
-                  //   console.log('文件获取数据完毕')
-                  //   console.log('成功条目数为:'+successTimes)
-                  //   console.log('失败条目总数为:'+failureTimes)
-                  // }
+                  if(readTimes === totalTimes) {
+                    console.log('文件获取数据完毕')
+                    console.log('成功条目数为:'+successTimes)
+                    console.log('失败条目总数为:'+failureTimes)
+                    // download 默认下载为最后一个
+                    // 所以文件合并
+                    const file = utils.pathResolve(`../outputFiles/daily/${beginDate}~${endDate}.csv`)
+                    res.download(file)
+                  }
                 })
             })
               
@@ -139,6 +163,9 @@ router.get('/',(req,res,next) => {
       console.log('日期函数报错')
     })
 })
+
+
+
 
 
 

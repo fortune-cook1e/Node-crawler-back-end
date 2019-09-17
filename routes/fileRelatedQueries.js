@@ -20,7 +20,7 @@ const queryList = []
 let readTimes = 0
 let successTimes = 0
 let failureTimes = 0
-let totalTimes = undefined
+let totalTimes = 0
 
 const keysReadPath = utils.pathResolve('../keys/daily.csv') // 待读取的文件，可修改
 const keysReadStream = fs.createReadStream(keysReadPath)
@@ -44,7 +44,7 @@ const rl = readline.createInterface({
   
   rl.on('close',line => {
 
-    totalTimes = keysList.length
+    totalTimes += keysList.length
     keysList.forEach(item => {
       superAgent.get(url+'?keyword='+item)
         .then(res => {

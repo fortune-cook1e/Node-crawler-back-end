@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>daily Trends</title>
+</head>
+<body>
+  <h1>Daily Trends</h1>
+  <p>选取2个日期，从而获取2个时间段之间的daily趋势关键词</p>
+  <form action="/daily" method="post">
+    <div class="begin">
+      <label for="beginDate">
+        开始日期
+        <input type="date" name="beginDate" id="beginDate">
+      </label>
+    </div>
+    <div class="end">
+      <label for="endDate">
+        截止日期
+        <input type="date" name='endDate' id='endDate'>
+      </label>
+    </div>
+    <button type="submit">提交日期</button>
+  </form>
+</body>
+</html>
