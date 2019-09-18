@@ -7,18 +7,21 @@ const path = require('path')
 
 
 
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 
 const dailyTrends = require('./routes/dailyTrends')
-// const fileRelatedQueries = require('./routes/fileRelatedQueries')
-// const relatedQueries = require('./routes/relatedQueries')
+const fileRelatedQueries = require('./routes/fileRelatedQueries')
+const relatedQueries = require('./routes/relatedQueries')
+const csvToJskey = require('./routes/csvToJskey')
 
 
 app.use('/daily',dailyTrends.router)
-// app.use('/fileRelated',fileRelatedQueries.router)
-// app.use('/related',relatedQueries.router)
+app.use('/files',fileRelatedQueries.router)
+app.use('/related',relatedQueries.router)
+app.use('/csv-to-jskey',csvToJskey.router)
 
 
 

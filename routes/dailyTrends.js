@@ -112,6 +112,7 @@ router.post('/',(req,res,next) => {
                 .then(response => {
                   readTimes++
                   successTimes++
+                  console.log('获取成功')
                   console.log('read:'+readTimes)
                   console.log('total:'+totalTimes)
                    response = JSON.parse(response.text)
@@ -138,6 +139,7 @@ router.post('/',(req,res,next) => {
                 }).catch(e => {
                   readTimes++
                   failureTimes++
+                  console.log('获取失败')
                   console.log('read:'+readTimes)
                   console.log('total:'+totalTimes)
                   if(readTimes === totalTimes) {

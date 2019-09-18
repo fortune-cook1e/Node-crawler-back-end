@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>csvToJskey</title>
+</head>
+<body>
+  <h1>csvToJskey</h1>
+  <p>功能：将csv格式的文件 转换为 module.key = [] 形式的js文件</p>
+
+  <form action="/csv-to-jskey" method="POST" enctype="multipart/form-data">
+    <label for="uploadFile">
+      上传文件(可提交多个csv格式文件)
+      <input type="file" id="uploadFile" name='uploadFile' multiple />
+    </label>
+    <button type="submit">
+      提交文件
+    </button>
+  </form>
+</body>
+</html>
