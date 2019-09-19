@@ -13,7 +13,7 @@ function pathResolve(dir) {
 
 // 渲染页面
 router.get('/',(req,res,next) => {
-  res.render('csvToJskey/csvToJskey')
+  res.render('convert/convert')
 })
 
 
@@ -29,7 +29,8 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
     const fileLength = self.length
     const readPath = file.path
     const readStream = fs.createReadStream(readPath)
-    const fileName = file.originalname.slice(0,1) // 取原文件的第一位文字当名字
+    const fileName = file.originalname.slice(0,file.originalname.indexOf('.csv')) // 文件名截止 .csv之前 
+    
     const writePath = pathResolve(`../outputFiles/jskeys/${fileName}.js`)  // 转出为js文件
     const writeStream = fs.createWriteStream(writePath)
     const rl = readline.createInterface({
@@ -44,7 +45,7 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
           console.log(`${file.originalname}转换成功`)
         }
         if(index === fileLength -1) {
-          res.send('文件全部转换完')
+          res.sendStatus(200)
         }
       })
     })

@@ -12,18 +12,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 
-const dailyTrends = require('./routes/dailyTrends')
-const fileRelatedQueries = require('./routes/fileRelatedQueries')
-const relatedQueries = require('./routes/relatedQueries')
-const csvToJskey = require('./routes/csvToJskey')
+const daily = require('./routes/daily')
+const convert = require('./routes/convert')
+const related = require('./routes/related')
 
 
-app.use('/daily',dailyTrends.router)
-app.use('/files',fileRelatedQueries.router)
-app.use('/related',relatedQueries.router)
-app.use('/csv-to-jskey',csvToJskey.router)
+app.use('/daily',daily.router)  // 爬取一段日期内数据
+app.use('/convert',convert.router)  // 转换csv格式为js文件
+app.use('/related',related.router) // 获取相关词
 
 
+app.get('/',(req,res,next) => {
+  res.redirect('/daily')
+})
 
 
 app.set('views',path.join(__dirname,'views'))

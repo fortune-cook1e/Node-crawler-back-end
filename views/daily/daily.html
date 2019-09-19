@@ -9,20 +9,37 @@
 <body>
   <h1>Daily Trends</h1>
   <p>选取2个日期，从而获取2个时间段之间的daily趋势关键词</p>
+  <nav>
+    <ul>
+      <li><a href="/convert">convert</a></li>
+      <li><a href="/daily">daily</a></li>
+      <li><a href="/related">related</a></li>
+    </ul>
+  </nav>
   <form action="/daily" method="post">
     <div class="begin">
       <label for="beginDate">
         开始日期
-        <input type="date" name="beginDate" id="beginDate">
+        <input type="date" name="beginDate" id="beginDate" required /> 
       </label>
     </div>
     <div class="end">
       <label for="endDate">
         截止日期
-        <input type="date" name='endDate' id='endDate'>
+        <input type="date" name='endDate' id='endDate' required />
       </label>
     </div>
-    <button type="submit">提交日期</button>
+
+    <div class="type">
+      <label for="fileType">选择导出文件类型:</label>
+      <select name="fileType" id="fileType" required>
+        <option value="">请选择类型</option>
+        <option value="js">js</option>
+        <option value="csv">csv</option>
+      </select>
+    </div>
+
+    <button type="submit">提交</button>
   </form>
 </body>
 </html>
