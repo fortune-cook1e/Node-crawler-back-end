@@ -45,7 +45,7 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
           console.log(`${file.originalname}转换成功`)
         }
         if(index === fileLength -1) {
-          res.sendStatus(200)
+          res.redirect('/convert')
         }
       })
     })

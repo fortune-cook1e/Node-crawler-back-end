@@ -36,14 +36,10 @@ const express = require('express')
 const router = express.Router()
 const fs = require('fs')
 const os = require('os')
-const superAgent = require('superagent')
-const path = require('path')
+const googleTrends = require('google-trends-api')
 
 const utils = require('../utils/index')
-const dailyTrendsList = []  // 数组对象存储 
-const dailyTrendsObj = {} // json对象存储
-const dailyRelatedList = []  // 数组对象存储
-const url = 'http://info.squeener.com/api/queries'
+
 
 
 
@@ -59,6 +55,9 @@ router.post('/',(req,res,next) => {
   let failureTimes = 0  // 失败次数
   let totalTimes = 0  // 总共需要读取的次数
   let flag = 0 // 检测是否所有日期读完
+  const list = []  // 数组对象存储 
+  let filterList = undefined
+
 
   let beginDate = req.body.beginDate  // 开始日期
   let endDate = req.body.endDate  // 结束日期
@@ -67,96 +66,94 @@ router.post('/',(req,res,next) => {
   const outputDaily = utils.pathResolve(`../outputFiles/daily/${beginDate}~${endDate}.${fileType}`)  // 可修改
   const dailyWriteStream = fs.createWriteStream(outputDaily)
 
+  // googleTrends.dailyTrends({
+  //   trendDate: new Date('2019-09-01'),
+  //   geo: 'US',
+  // }, function(err, results) {
+  //   if (err) {
+  //     console.log(err);
+  //   }else{
+  //     console.log(results);
+  //   }
+  // });
+
 
     // 可分2个文件
   // const outputRelated = utils.pathResolve(`../outputFiles/related/${beginDate}~${endDate}-related.csv`) // 可修改
   // const relatedWriteStream = fs.createWriteStream(outputRelated)
+utils.getRangeDate(beginDate,endDate)
+      .then(dateList => {
+        dateList.forEach(date => {
+          googleTrends.dailyTrends({
+            trendDate:new Date(date),
+            geo: 'US',
+          },(err,response) => {
+            if(err) {
+              console.log(err)
+              console.log('dailyTrends 报错')
+            } else {
 
-
-  
-
-  // 根据日期修改来获取对应 query
-  utils.getRangeDate(beginDate,endDate)
-    .then(dateArray => {
-        dateArray.forEach((date,dateIndex) => {
-          utils.getDailyTrends(date,'US')
-          .then(response => {
-            response = JSON.parse(response)
-            const searchDays = response.default.trendingSearchesDays
-            totalTimes += searchDays[0].trendingSearches.length
-            
-    
-            // 遍历日期
-            searchDays.forEach((day,dayIndex,daySelf) => {
-              day.trendingSearches.forEach((searches) => {
-                readTimes++
-                dailyTrendsList.push(searches.title.query)
-                
-                const relatedQueries = searches.relatedQueries
-                totalTimes += relatedQueries.length
-
-    
-                relatedQueries.forEach((query) => {
-                  readTimes++
-                  dailyTrendsList.push(query.query)
-                })
-
-                console.log('read:'+readTimes)
-                console.log('total:'+totalTimes)
-                if(readTimes === totalTimes ) {
-                  flag++
-                  console.log(date+'读完'+flag)
-                  if(flag === dateArray.length) {
-                    console.log('全部读完')
-                  }
+              response = JSON.parse(response)
+              if(response.default.trendingSearchesDays[0]) {
+                if(response.default.trendingSearchesDays[0].trendingSearches){
+                  const { trendingSearchesDays } = response.default
+                  const { trendingSearches } = trendingSearchesDays[0]
+                  totalTimes += trendingSearches.length  // 基础query长度
+                  trendingSearches.forEach(search => {
+                    readTimes++
+                    list.push(search.title.query)
+                    const { relatedQueries } = search
+                    totalTimes += relatedQueries.length // relatedQueries长度
+                    relatedQueries.forEach(query => {
+                      readTimes++
+                      list.push(query.query)
+                    })
+                  })
+                }
+              }
+              
+              if(readTimes === totalTimes) {
+                flag++ // 加入flag 是为了检测 所有日期是否读完；添加完一个日期的所有数据 则flag++
+                console.log(date+'读完,开始去重'+flag)
+                if(flag === dateList.length) {
+                  filterList = list.filter((ele,index,self) => self.indexOf(ele) === index) // 数组去重
                   switch(fileType) {
-                    case 'js' :{
-                      dailyTrendsList.forEach(item => {
-                        dailyWriteStream.write(JSON.stringify(item) + os.EOL)  // 输出的js文件一定要加入 exports.keys = {} 前缀
-                      })
-                      break;
-                    }
-                    case 'csv': {
-                      dailyTrendsList.forEach(item => {
+                    case 'csv' : 
+                      filterList.forEach(item => {
                         dailyWriteStream.write(item + os.EOL)
                       })
+                      res.redirect('/')
                       break;
-                    }
-                    default: {
-                      dailyTrendsList.forEach(item => {
-                        dailyWriteStream.write(item + os.EOL)
-                      })
+                    case 'js':{
+                      dailyWriteStream.write('exports.keys='+JSON.stringify(filterList,'','\t'))
+                      res.redirect('/')
+                      break;
+                     }
                     }
                   }
                 }
-              })
-            })
-          }).catch(e => {
-            console.log(e)
-            readTimes++
-            console.log('获取当前日期趋势词报错')
+            }
           })
-
         })
-
-
-    }).catch(e => {
-      console.log(e)
-      console.log('日期函数报错')
+      }).catch(e => {
+        console.log(e)
+        console.log('日期函数报错')
+      })
     })
-})
-
-
-
-
-
-
-
 
 module.exports = {
   router:router,
-  dailyTrendsList:dailyTrendsList
 }
+      
+  
+
+
+
+
+
+
+
+
 
 
 
