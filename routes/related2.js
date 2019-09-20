@@ -34,20 +34,24 @@ router.post('/',upload.array('relatedFiles'),(req,res,next) => {
   let allFlag = 0  // 用于检测全部文件是否读完
 
   // 处理files
-  req.files.forEach(file => {
+  req.files.forEach((file,index) => {
     let filesList = []  
     let queryList = []
     const readPath = file.path  // 文件上传路径
     const readStream = fs.createReadStream(readPath)
+    console.log('第'+index+'个文件')
     const type = file.originalname.slice(file.originalname.indexOf('.')+1,file.originalname.length) // 获取当前file文件类型
     const fileName = file.originalname.slice(0,file.originalname.indexOf('.'))  // 文件名设置为 .js/.csv之前的名
     
-    const writePath = resolvePath(`../outputFiles/related/${fileName}.${outputFileType}`)
-    const writeStream = fs.createWriteStream(writePath)
+    // const writePath = resolvePath(`../outputFiles/related/${fileName}.${outputFileType}`)
+    // const writeStream = fs.createWriteStream(writePath)
 
     let oldPath = file.path
     let newPath = path.join(__dirname,'../temp/',file.originalname)
-    fs.renameSync(oldPath,newPath) // 修改文件名
+    if(!fs.existsSync(newPath)) {
+      fs.renameSync(oldPath,newPath) // 修改文件名
+    }
+    
     
 
     // 判断上传文件类型 处理 filesList
@@ -55,7 +59,8 @@ router.post('/',upload.array('relatedFiles'),(req,res,next) => {
       case 'js' :{
         let keys = require(newPath)
         filesList = keys.keys
-        getRelated(filesList,writeStream,file.originalname)
+        getRelated(filesList,fileName)
+        console.log('getRelated执行完')
         break;
       }
       case 'csv' : {
@@ -67,22 +72,22 @@ router.post('/',upload.array('relatedFiles'),(req,res,next) => {
         })
         rl.on('close',line => {
           console.log(file.originalname+'读取完后，开始获取related')
-          getRelated(filesList,writeStream,file.originalname)
+          getRelated(filesList,fileName)
         })
         break;
       }
-      default :{
-        const rl = readline.createInterface({
-          input:readStream
-        })
-        rl.on('line',line => {
-          filesList.push(line)
-        })
-        rl.on('close',line => {
-          console.log(file.originalname+'读取完后，开始获取related')
-          getRelated(filesList,writeStream,file.originalname)
-        })
-      }
+      // default :{
+      //   const rl = readline.createInterface({
+      //     input:readStream
+      //   })
+      //   rl.on('line',line => {
+      //     filesList.push(line)
+      //   })
+      //   rl.on('close',line => {
+      //     console.log(file.originalname+'读取完后，开始获取related')
+      //     getRelated(filesList,writeStream,file.originalname)
+      //   })
+      // }
     }
 
       /**
@@ -91,11 +96,13 @@ router.post('/',upload.array('relatedFiles'),(req,res,next) => {
    * @param {*} stream  写入流
    * @param {*} fileName  文件名
    */
-  function getRelated(fileList,stream,fileName){
+  function getRelated(fileList,fileName){
     let readTimes = 0
     let totalTimes = 0
     let fileFlag = 0 // 用于检测一个文件是否读完
     let listLength = fileList.length
+    const writePath = resolvePath(`../outputFiles/related/${fileName}.${outputFileType}`)
+    const writeStream = fs.createWriteStream(writePath)
 
     // 遍历集合
     fileList.forEach((item,index,self) => {
@@ -125,18 +132,18 @@ router.post('/',upload.array('relatedFiles'),(req,res,next) => {
               console.log(fileName+'的related获取完,')
               switch(outputFileType) {
                 case 'js' : {
-                  stream.write('exports.keys='+JSON.stringify(filterList,'','\t'))
+                  writeStream.write('exports.keys='+JSON.stringify(filterList,'','\t'))
                   break;
                 }
                 case 'csv': {
                   filterList.forEach(item => {
-                    stream.write(item + os.EOL)
+                    writeStream.write(item + os.EOL)
                   })
                   break;
                 }
                 default : {
                   filterList.forEach(item => {
-                    stream.write(item + os.EOL)
+                    writeStream.write(item + os.EOL)
                   })
                 }
               }
@@ -152,18 +159,18 @@ router.post('/',upload.array('relatedFiles'),(req,res,next) => {
               console.log(fileName+'的related获取完,')
               switch(outputFileType) {
                 case 'js' : {
-                  stream.write('exports.keys='+JSON.stringify(filterList,'','\t'))
+                  writeStream.write('exports.keys='+JSON.stringify(filterList,'','\t'))
                   break;
                 }
                 case 'csv': {
                   filterList.forEach(item => {
-                    stream.write(item + os.EOL)
+                    writeStream.write(item + os.EOL)
                   })
                   break;
                 }
                 default : {
                   filterList.forEach(item => {
-                    stream.write(item + os.EOL)
+                    writeStream.write(item + os.EOL)
                   })
                 }
               }
