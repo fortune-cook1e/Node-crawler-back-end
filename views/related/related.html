@@ -8,23 +8,25 @@
 </head>
 <body>
   <h1>文件上传</h1>
-  <p>通过上传的文件来获取关键词(可多选)</p>
+  <p>通过上传的文件来获取关键词(多选)</p>
   <nav>
     <ul>
-      <li><a href="/convert">convert</a></li>
-      <li><a href="/daily">daily</a></li>
-      <!-- <li><a href="/related">related</a></li> -->
-      <li><a href="/related2">related2</a></li>
-      <li><a href="/single">single</a></li>
+        <li><a href="/daily">daily</a></li>
+        <li><a href="/related">related</a></li>
+        <li><a href="/related2">related2</a></li>
+        <li><a href="/single">single</a></li>
+        <li><a href="static">static</a></li>
+        <li><a href="/convert">convert</a></li>
+        <li><a href="csv">csv</a></li>
     </ul>
   </nav>
 
-  <form action="/related" method="POST" enctype="multipart/form-data">
+  <!-- <form id="form" enctype="multipart/form-data">
     <section>
-      <label for="file">文件上传</label>
-      <input type="file" id="file" name="relatedFiles" multiple>
+      <label for="files">文件上传</label>
+      <input type="file" id="files" name="files" multiple>
     </section>
-
+    
     <section>
       <label for="fileType">输出文件类型</label>
       <select name="fileType" id="fileType">
@@ -33,11 +35,37 @@
         <option value="csv">csv</option>
       </select>
     </section>
+      <button>提交</button>
+  </form> -->
 
-    <section>
-      <button type="submit">提交</button>
-    </section>
-  </form>
-  
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input id="file" type="file" name="file"/>
+    <label for="fileType">输出文件类型</label>
+      <select name="fileType" id="fileType">
+        <option value="">请选择输入文件类型</option>
+        <option value="js">js</option>
+        <option value="csv">csv</option>
+      </select>
+    <button id="upload" type="button">upload</button>
+</form>
+
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <script>
+
+
+    $('button').click(e => {
+      e.preventDefault()
+      console.log(new FormData($('#uploadForm')[0]))
+    	$.ajax({
+    url: '/related',
+    type: 'POST',
+    cache: false,
+    data: new FormData($('#uploadForm')[0]),
+    processData: false,
+    contentType: false
+}).success(function(res) {
+})
+    })
+  </script>
 </body>
 </html>

@@ -15,7 +15,7 @@ function resolve(dir){
 }
 
 router.get('/',(req,res,next) => {
-  res.render('singleRelated/single')
+  res.render('single/single')
 })
 
 
@@ -31,7 +31,7 @@ router.post('/',upload.single('relatedFiles'),(req,res,next) => {
   const readStream = fs.createReadStream(readPath)
   const type = file.originalname.slice(file.originalname.indexOf('.')+1,file.originalname.length) // 获取当前file文件类型
   const fileName = file.originalname.slice(0,file.originalname.indexOf('.'))  // 文件名设置为 .js/.csv之前的名
-  const writePath = resolve(`../outputFiles/related/${file.originalname}`)
+  const writePath = resolve(`../files/single/${file.originalname}`)
   const writeStream = fs.createWriteStream(writePath) 
 
   const oldPath = file.path

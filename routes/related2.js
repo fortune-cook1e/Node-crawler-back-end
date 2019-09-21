@@ -101,7 +101,7 @@ router.post('/',upload.array('relatedFiles'),(req,res,next) => {
     let totalTimes = 0
     let fileFlag = 0 // 用于检测一个文件是否读完
     let listLength = fileList.length
-    const writePath = resolvePath(`../outputFiles/related/${fileName}.${outputFileType}`)
+    const writePath = resolvePath(`../files/related2/${fileName}.${outputFileType}`)
     const writeStream = fs.createWriteStream(writePath)
 
     // 遍历集合

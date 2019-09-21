@@ -11,14 +11,16 @@
   <p>选取2个日期，从而获取2个时间段之间的daily趋势关键词</p>
   <nav>
     <ul>
-      <li><a href="/convert">convert</a></li>
-      <li><a href="/daily">daily</a></li>
-      <!-- <li><a href="/related">related</a></li> -->
-      <li><a href="/related2">related2</a></li>
-      <li><a href="/single">single</a></li>
+        <li><a href="/daily">daily</a></li>
+        <li><a href="/related">related</a></li>
+        <li><a href="/related2">related2</a></li>
+        <li><a href="/single">single</a></li>
+        <li><a href="static">static</a></li>
+        <li><a href="/convert">convert</a></li>
+        <li><a href="csv">csv</a></li>
     </ul>
   </nav>
-  <form action="/daily" method="post">
+  <form>
     <div class="begin">
       <label for="beginDate">
         开始日期
@@ -41,7 +43,29 @@
       </select>
     </div>
 
-    <button type="submit">提交</button>
+    <button type="submit" id="submit">提交</button>
+    <p id="result"></p>
   </form>
+
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <script>
+    $(document).ready(function(){
+    $("button").click(function(e){
+      e.preventDefault()
+        $.ajax({
+        url:'/daily',
+        method:'post',
+        data:{
+          beginDate:$('#beginDate').val(),
+          endDate:$('#endDate').val(),
+          fileType:$('#fileType').val()
+        },
+        success(res){
+          console.log(res)
+        }
+      })
+    });  
+  });
+  </script>
 </body>
 </html>

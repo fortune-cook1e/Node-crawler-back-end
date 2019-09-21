@@ -22,7 +22,7 @@ router.post('/',upload.single('file'),(req,res,next) => {
   const readPath = file.path
   const fileName = file.originalname.slice(0,file.originalname.indexOf('.'))  // 文件名设置为 .js/.csv之前的名
   const readStream = fs.createReadStream(readPath)
-  const writePath = resolve(`../outputFiles/csvs/${fileName}.csv`)
+  const writePath = resolve(`../files/csvs/${fileName}.csv`)
   const writeStream = fs.createWriteStream(writePath)
 
   const rl = readline.createInterface({

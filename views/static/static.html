@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>手动修改文件路径来获取relatedQueries</title>
+</head>
+<body>
+    <ul>
+        <li><a href="/daily">daily</a></li>
+        <li><a href="/related">related</a></li>
+        <li><a href="/related2">related2</a></li>
+        <li><a href="/single">single</a></li>
+        <li><a href="static">static</a></li>
+        <li><a href="/convert">convert</a></li>
+        <li><a href="csv">csv</a></li>
+    </ul>
+    
+  <h1>手动修改 static.js 代码来获取related</h1>
+  <p>获取csv格式文件的 queries</p>
+  <p>点击按钮开始获取related</p>
+  <!-- <form action="/static" method="POST">
+    <button type="submit">开始获取related</button>
+  </form> -->
+
+  <button id="submit">submit</button>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <script>
+    
+    async function _fetch(url) {
+  const options = {
+    method:'POST',
+    headers:{
+      'Connection': 'keep-alive',
+      'Accept-Encoding': '',
+      'Accept-Language': 'en-US,en;q=0.8'
+    }
+  }
+  return fetch(url,options)
+}
+
+$('#submit').click(() => _fetch('/static'))
+  </script>
+</body>
+</html>
