@@ -75,6 +75,7 @@ function getRangeDate(begin,end){
   return new Promise((resolve,reject) => {
     try {
       let arr = []
+      console.log(begin,end)
       let ab = begin.split('-')
       let ae = end.split('-')
     
@@ -97,6 +98,20 @@ function getRangeDate(begin,end){
     }
   })
 }
+
+async function _fetch(url) {
+  const options = {
+    method:'POST',
+    url:url,
+    headers:{
+      'Connection': 'keep-alive',
+      'Accept-Encoding': '',
+      'Accept-Language': 'en-US,en;q=0.8'
+    }
+  }
+  return fetch(options)
+}
+
 
 
 

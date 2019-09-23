@@ -58,12 +58,20 @@ router.post('/',(req,res,next) => {
   const list = []  // 数组对象存储 
   let filterList = undefined
 
+  console.log(req.body)
 
-  let beginDate = req.body.beginDate  // 开始日期
-  let endDate = req.body.endDate  // 结束日期
+  req.body.date = req.body.date.map(time => {
+    return time.slice(0,time.indexOf('T'))
+  })
+  let beginDate = req.body.date[0]
+  let endDate = req.body.date[1]
+  console.log(beginDate,endDate)
+
+  // let beginDate = req.body.beginDate  // 开始日期
+  // let endDate = req.body.endDate  // 结束日期
   let fileType = req.body.fileType
 
-  const outputDaily = utils.pathResolve(`../outputFiles/daily/${beginDate}~${endDate}.${fileType}`)  // 可修改
+  const outputDaily = utils.pathResolve(`../files/daily/${beginDate}~${endDate}.${fileType}`)  // 可修改
   const dailyWriteStream = fs.createWriteStream(outputDaily)
 
   // googleTrends.dailyTrends({
@@ -122,11 +130,11 @@ utils.getRangeDate(beginDate,endDate)
                       filterList.forEach(item => {
                         dailyWriteStream.write(item + os.EOL)
                       })
-                      res.redirect('/')
+                      res.send('ok')
                       break;
                     case 'js':{
                       dailyWriteStream.write('exports.keys='+JSON.stringify(filterList,'','\t'))
-                      res.redirect('/')
+                      res.send('ok')
                       break;
                      }
                     }

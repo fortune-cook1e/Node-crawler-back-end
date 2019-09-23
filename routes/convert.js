@@ -23,6 +23,7 @@ router.get('/',(req,res,next) => {
  * @description 单个文件用 upload.single() 方法 用req.file来访问
  */
 router.post('/',upload.array('uploadFile'),(req,res,next) => {
+  console.log(req.files)
   req.files.forEach((file,index,self) => {
 
     let list = []
@@ -31,7 +32,7 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
     const readStream = fs.createReadStream(readPath)
     const fileName = file.originalname.slice(0,file.originalname.indexOf('.csv')) // 文件名截止 .csv之前 
     
-    const writePath = pathResolve(`../outputFiles/jskeys/${fileName}.js`)  // 转出为js文件
+    const writePath = pathResolve(`../files/convert/${fileName}.js`)  // 转出为js文件
     const writeStream = fs.createWriteStream(writePath)
     const rl = readline.createInterface({
       input:readStream
