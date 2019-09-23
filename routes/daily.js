@@ -51,8 +51,6 @@ router.get('/',(req,res,next) => {
 
 router.post('/',(req,res,next) => {
   let readTimes = 0  // 读取次数
-  let successTimes = 0 // 成功次数
-  let failureTimes = 0  // 失败次数
   let totalTimes = 0  // 总共需要读取的次数
   let flag = 0 // 检测是否所有日期读完
   const list = []  // 数组对象存储 
@@ -132,6 +130,7 @@ utils.getRangeDate(beginDate,endDate)
                       filterList.forEach(item => {
                         dailyWriteStream.write(item + os.EOL)
                       })
+                      console.log(32132131)
                       res.send('ok')
                       break;
                     case 'js':{

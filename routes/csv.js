@@ -42,6 +42,7 @@ router.post('/',upload.single('file'),(req,res,next) => {
     newList.forEach(item => {
       writeStream.write(item + os.EOL)
     })
+    res.send('ok')
   })
 
 })
