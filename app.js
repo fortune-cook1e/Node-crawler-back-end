@@ -32,6 +32,7 @@ const related = require('./routes/related')
 const related2 = require('./routes/related2')
 const csv = require('./routes/csv')
 const static = require('./routes/static')
+const combine = require('./routes/combine')
 
 app.use('/daily',daily.router)  // 爬取一段日期内数据
 app.use('/convert',convert.router)  // csv格式转换为js文件
@@ -39,7 +40,7 @@ app.use('/related',related) // 获取相关词
 app.use('/related2',related2.router)  // 多选文件 获取 related
 app.use('/csv',csv)               //  js 转csv
 app.use('/static',static)       // 通过jskeys文件 来获取 related （必须手动修改文件路径） 非上传形式
-
+app.use('/combine',combine)
 
 app.get('/',(req,res,next) => {
   res.redirect('/daily')

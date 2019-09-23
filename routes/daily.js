@@ -63,12 +63,6 @@ router.post('/',(req,res,next) => {
   })
   let beginDate = req.body.date[0]
   let endDate = req.body.date[1]
-
-  // let beginDate = req.body.beginDate  // 开始日期
-  // let endDate = req.body.endDate  // 结束日期
-
-  // let beginDate = req.body.beginDate  // 开始日期
-  // let endDate = req.body.endDate  // 结束日期
   let fileType = req.body.fileType
 
   const outputDaily = utils.pathResolve(`../files/daily/${beginDate}~${endDate}.${fileType}`)  // 可修改

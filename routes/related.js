@@ -26,6 +26,7 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
   const files = req.files  // 上传文件
   const filesLength = files.length  // 文件总数
   let fileFlag = 0  // 用于检验全部文件是否读完
+  console.log('开始获取')
   
   files.forEach(file => {
 
