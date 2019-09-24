@@ -25,9 +25,10 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
 
   files.forEach((file,index) => {
     if(index === 0) {
-      name = file.originalname.slice(0,5)
+      name = file.originalname.slice(0,7)
     }
     const originalname = file.originalname
+    console.log(originalname)
     const readPath = file.path
     const readStream = fs.createReadStream(readPath)
     const type = originalname.slice(originalname.indexOf('.')+1,originalname.length)
@@ -54,6 +55,8 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
 
   const writePath = resolve(`../files/combine/${name}.combine.${outputType}`)
   const writeStream = fs.createWriteStream(writePath)
+
+  
   totalList = totalList.concat(csvList,jsList)
 
   switch(outputType) {

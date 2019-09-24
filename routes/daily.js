@@ -68,8 +68,9 @@ router.post('/',(req,res,next) => {
   const outputDaily = utils.pathResolve(`../files/daily/${beginDate}~${endDate}.${fileType}`)  // 可修改
   const dailyWriteStream = fs.createWriteStream(outputDaily)
 
+
   // googleTrends.dailyTrends({
-  //   trendDate: new Date('2019-09-01'),
+  //   trendDate: new Date('2019-07-01'),
   //   geo: 'US',
   // }, function(err, results) {
   //   if (err) {
@@ -123,6 +124,7 @@ utils.getRangeDate(beginDate,endDate)
                     case 'csv' : 
                       filterList.forEach(item => {
                         dailyWriteStream.write(item + os.EOL)
+                        readyWriteStream.write(item + os.EOL)
                       })
                       console.log(32132131)
                       res.send('ok')

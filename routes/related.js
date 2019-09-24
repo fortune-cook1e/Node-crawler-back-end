@@ -78,8 +78,9 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
       let readTimes = 0 
       let totalTimes = fileList.length // 词汇总量
       
-      const writePath = resolve(`../files/related/${name}.${outputFileType}`)
+      const writePath = resolve(`../files/related/${name}~related.${outputFileType}`)
       const writeStream = fs.createWriteStream(writePath)
+
 
       // 遍历数组获取related
       fileList.forEach(item => {

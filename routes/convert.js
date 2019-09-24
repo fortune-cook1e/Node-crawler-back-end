@@ -34,6 +34,10 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
     
     const writePath = pathResolve(`../files/convert/${fileName}.js`)  // 转出为js文件
     const writeStream = fs.createWriteStream(writePath)
+
+    const readyPath = pathResolve(`../files/ready/${fileName}.js`)  // 转出为js文件
+    const readyWriteStream = fs.createWriteStream(readyPath) 
+
     const rl = readline.createInterface({
       input:readStream
     })
@@ -49,6 +53,16 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
           res.send('ok')
         }
       })
+
+      readyWriteStream.write('exports.keys = '+JSON.stringify(list,'','\t'),err => {
+        if(!err) {
+          console.log(`${file.originalname}转换成功`)
+        }
+        if(index === fileLength -1) {
+          res.send('ok')
+        }
+      })
+
     })
   })
 })

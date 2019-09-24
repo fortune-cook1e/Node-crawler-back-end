@@ -28,6 +28,9 @@ router.post('/',upload.array('file'),(req,res,next) => {
     const readStream = fs.createReadStream(readPath)
     const writePath = resolve(`../files/csvs/${fileName}.csv`)
     const writeStream = fs.createWriteStream(writePath)
+
+    const ready = resolve(`../files/ready/${fileName}.csv`)
+    const readyWriteStream = fs.createWriteStream(ready)
   
     const rl = readline.createInterface({
       input:readStream
@@ -45,6 +48,7 @@ router.post('/',upload.array('file'),(req,res,next) => {
       })
       newList.forEach(item => {
         writeStream.write(item + os.EOL)
+        readyWriteStream.write(item + os.EOL)
       })
 
       fileFlag++
