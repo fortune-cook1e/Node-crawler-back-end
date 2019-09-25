@@ -3,6 +3,7 @@ const app = express()
 const ejs = require('ejs')
 const bodyParser = require('body-parser')  // 处理post请求
 const path = require('path')
+const routers = require('./routes/')
 
 
 
@@ -11,8 +12,8 @@ const path = require('path')
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// 允许跨域
 
+// 允许跨域
 app.all('*',function(req,res,next) {
   res.header('Access-Control-Allow-Origin','*')
   res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
@@ -24,23 +25,15 @@ app.all('*',function(req,res,next) {
   }
 })
 
+app.use('/daily',routers.daily)    // 按照日期获取实时趋势
+app.use('/convert',routers.convert)  // csv、js格式文件互转
+app.use('/combine',routers.combine)   // 合并csv或js格式文件
+app.use('/related',routers.related)  // 获取relatedQueries
+app.use('/format',routers.format)    // 格式化搜狗词库
+app.use('/static',routers.static)   // 手动修改路径来获取relatedQueries  针对数据量多的文件
 
 
-const daily = require('./routes/daily')
-const convert = require('./routes/convert')
-const related = require('./routes/related')
-const csv = require('./routes/csv')
-const static = require('./routes/static')
-const combine = require('./routes/combine')
-const translate = require('./routes/translate')
 
-app.use('/daily',daily.router)  // 爬取一段日期内数据
-app.use('/convert',convert.router)  // csv格式转换为js文件
-app.use('/related',related) // 获取相关词
-app.use('/csv',csv)               //  js 转csv
-app.use('/static',static)       // 通过jskeys文件 来获取 related （必须手动修改文件路径） 非上传形式
-app.use('/combine',combine)  // 合并csv/js格式文件
-app.use('/translate',translate)
 
 app.get('/',(req,res,next) => {
   res.redirect('/daily')

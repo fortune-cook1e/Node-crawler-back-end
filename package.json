@@ -7,17 +7,13 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "@vitalets/google-translate-api": "^3.0.0",
     "body-parser": "^1.19.0",
-    "connect-multiparty": "^2.2.0",
     "dayjs": "^1.8.16",
     "ejs": "^2.7.1",
     "express": "^4.17.1",
-    "google-translate-api": "^2.3.0",
     "google-trends-api": "^4.9.0",
     "iconv-lite": "^0.5.0",
     "multer": "^1.4.2",
-    "superagent": "^5.1.0",
-    "translate": "^1.1.0"
+    "superagent": "^5.1.0"
   }
 }

@@ -53,7 +53,7 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
 
   })
 
-  const writePath = resolve(`../files/combine/${name}.combine.${outputType}`)
+  const writePath = resolve(`../files/combine/${name}~combine.${outputType}`)
   const writeStream = fs.createWriteStream(writePath)
 
   
