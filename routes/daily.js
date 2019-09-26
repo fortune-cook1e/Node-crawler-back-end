@@ -124,7 +124,6 @@ utils.getRangeDate(beginDate,endDate)
                     case 'csv' : 
                       filterList.forEach(item => {
                         dailyWriteStream.write(item + os.EOL)
-                        readyWriteStream.write(item + os.EOL)
                       })
                       console.log(32132131)
                       res.send('ok')

@@ -7,6 +7,7 @@ const os = require('os')
 const path = require('path')
 const readline = require('readline')
 const superAgent = require('superagent')
+const googleTrends = require('google-trends-api')
 
 function resolve(dir) {
   return path.join(__dirname,dir)
@@ -84,10 +85,11 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
 
       // 遍历数组获取related
       fileList.forEach(item => {
-        superAgent.get(url+'?keyword='+item)
+        // superAgent.get(url+'?keyword='+item)
+          googleTrends.relatedQueries({keyword:item})
               .then(response => {
                 readTimes++ // 读完一个单词就 readTimes ++ 直到与 totalTimes相同
-                response = JSON.parse(response.text)
+                response = JSON.parse(response)  // 如果用的是 google 则去掉 .text
                 if(response.default) {
                   let list = response.default.rankedList[0].rankedKeyword
                   list.forEach(item => {
@@ -107,6 +109,7 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
                       break;
                     }
                     case 'csv': {
+                      console.log(filterList)
                       filterList.forEach(item => {
                         writeStream.write(item + os.EOL)
                       })
@@ -138,6 +141,7 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
                       break;
                     }
                     case 'csv': {
+                      console.log(filterList)
                       filterList.forEach(item => {
                         writeStream.write(item + os.EOL)
                       })
