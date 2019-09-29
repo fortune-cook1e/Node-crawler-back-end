@@ -14,9 +14,6 @@ function resolve(dir) {
 
 const url = 'http://info.squeener.com/api/queries'
 
-router.get('/',(req,res,next) => {
-  res.render('static/static')
-})
 
 router.post('/',(req,res,next) => {
 

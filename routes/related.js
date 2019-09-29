@@ -15,9 +15,6 @@ function resolve(dir) {
 
 const url = 'http://info.squeener.com/api/queries'
 
-router.get('/',(req,res,next) => {
-  res.render('related/related')
-})
 
 
 router.post('/',upload.array('uploadFile'),(req,res,next) => {
@@ -68,6 +65,18 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
        })
        break;
       }
+      default: {
+        const rl = readline.createInterface({
+          input:readStream
+        }) 
+        rl.on('line',line => {
+          fileList.push(line)
+        })
+        rl.on('close',line => {
+          console.log(fileName+"读取完，开始获取related")
+          getRelated(fileList,fileName)
+        })
+      }
     }
 
     /**
@@ -88,30 +97,20 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
         // superAgent.get(url+'?keyword='+item)
           googleTrends.relatedQueries({keyword:item})
               .then(response => {
-                // readTimes++ // 读完一个单词就 readTimes ++ 直到与 totalTimes相同
-                // console.log(readTimes,totalTimes)
-                // response = JSON.parse(response)  // 如果用的是 google 则去掉 .text
-                // if(response.default) {
-                //   let list = response.default.rankedList[0].rankedKeyword
-                //   list.forEach(item => {
-                //     queryList.push(item.query)
-                //   })
-                // }
+
                 try {
                   readTimes++ // 读完一个单词就 readTimes ++ 直到与 totalTimes相同
-                console.log(readTimes,totalTimes)
-                response = JSON.parse(response)  // 如果用的是 google 则去掉 .text
-                if(response.default) {
-                  let list = response.default.rankedList[0].rankedKeyword
-                  list.forEach(item => {
-                    queryList.push(item.query)
-                  })
-                }
-
+                  console.log(readTimes,totalTimes)
+                  response = JSON.parse(response)  // 如果用的是 google 则去掉 .text
+                  if(response.default) {
+                    let list = response.default.rankedList[0].rankedKeyword
+                    list.forEach(item => {
+                      queryList.push(item.query)
+                    })
+                  }
                 } catch(e) {
                   console.log(e)
                 }
-                // console.log(readTimes,totalTimes)
                 
                 // 如果 readTimes === totalTimes ，则一个单词读完
                 if(readTimes === totalTimes) {

@@ -5,26 +5,6 @@ const superAgent = require('superagent')
 
 const url = 'http://info.squeener.com/api/queries'
 
-/**
- * @description 获取对应日期的Trends
- * @param {*} time 时间
- * @param {*} country 国家
- * @returns 
- */
-function getDailyTrends(time,country) {
-  return new Promise((resolve,reject) => {
-    googleTrends.dailyTrends({
-      trendDate:time || undefined,  // 格式为 new Date('2019-09-10)
-      geo:country || undefined   // 国家名
-    },(err,results) => {
-      if(err) {
-        reject(err)
-      } else {
-        resolve(results)
-      }
-    })
-  })
-}
 
 /**
  * @description 获取相关关键词
@@ -48,10 +28,6 @@ function getRelatedQueries(list) {
       //   })
     })
   })
-}
-
-function pathResolve(dir) {
-  return path.join(__dirname,dir)
 }
 
 Date.prototype.format = function(){
@@ -99,17 +75,36 @@ function getRangeDate(begin,end){
   })
 }
 
-async function _fetch(url) {
-  const options = {
-    method:'POST',
-    url:url,
-    headers:{
-      'Connection': 'keep-alive',
-      'Accept-Encoding': '',
-      'Accept-Language': 'en-US,en;q=0.8'
+
+/**
+ * @description 输出文件
+ * @param {*} outputFileType 导出类型
+ * @param {*} list          待导出的数据
+ * @param {*} writeStream   写入流
+ * @param {*} res           res（必须为响应response对象）
+ */
+function outputFile(outputFileType,list,writeStream,res) {
+  if(outputFileType === undefined) return
+  switch(outputFileType) {
+    case 'csv':{
+      list.forEach(item => {
+        writeStream.write(item)
+      })
+      res.send('ok')
+      break;
+    }
+    case 'js' : {
+      writeStream.write('exports.keys = ' + JSON.stringify(list,'','\t'))
+      res.send('ok')
+      break;
+    }
+    default : {
+      list.forEach(item => {
+        writeStream.write(item)
+      })
+      res.send('ok')
     }
   }
-  return fetch(options)
 }
 
 
@@ -117,8 +112,7 @@ async function _fetch(url) {
 
 
 module.exports = {
-  getDailyTrends:getDailyTrends,
-  getRelatedQueries:getRelatedQueries,
-  pathResolve:pathResolve,
-  getRangeDate:getRangeDate
+  getRelatedQueries,
+  getRangeDate,
+  outputFile
 }

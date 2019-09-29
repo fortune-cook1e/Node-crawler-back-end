@@ -49,7 +49,12 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
         csvList = csvList.concat(formatArray)
         break;
       }
-      default:{}
+      default:{
+        let reg = new RegExp("\r\n", "g")
+        let formatArray = fs.readFileSync(readPath).toString().split(reg)  // csv转数组
+        csvList = csvList.concat(formatArray)
+        break;
+      }
     }
 
   })

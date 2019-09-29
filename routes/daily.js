@@ -37,16 +37,19 @@ const router = express.Router()
 const fs = require('fs')
 const os = require('os')
 const googleTrends = require('google-trends-api')
+const path = require('path')
 
-const utils = require('../utils/index')
+const { outputFile } = require('../utils/index')
 
+/**
+ * @description 路径解析
+ * @param {*} dir 文件路径
+ * @returns 返回文件绝对路径
+ */
+function resolve(dir) {
+  return path.join(__dirname,dir)
+}
 
-
-
-
-router.get('/',(req,res,next) => {
-  res.render('daily/daily')
-})
 
 
 router.post('/',(req,res,next) => {
@@ -65,7 +68,7 @@ router.post('/',(req,res,next) => {
   let fileType = req.body.fileType
   const country = req.body.country
 
-  const outputDaily = utils.pathResolve(`../files/daily/${beginDate}~${endDate}~${country}.${fileType}`)  // 可修改
+  const outputDaily = resolve(`../files/daily/${beginDate}~${endDate}~${country}.${fileType}`)  // 可修改
   const dailyWriteStream = fs.createWriteStream(outputDaily)
 
 
@@ -96,23 +99,27 @@ utils.getRangeDate(beginDate,endDate)
               console.log('dailyTrends 报错')
             } else {
 
-              response = JSON.parse(response)
-              if(response.default.trendingSearchesDays[0]) {
-                if(response.default.trendingSearchesDays[0].trendingSearches){
-                  const { trendingSearchesDays } = response.default
-                  const { trendingSearches } = trendingSearchesDays[0]
-                  totalTimes += trendingSearches.length  // 基础query长度
-                  trendingSearches.forEach(search => {
-                    readTimes++
-                    list.push(search.title.query)
-                    const { relatedQueries } = search
-                    totalTimes += relatedQueries.length // relatedQueries长度
-                    relatedQueries.forEach(query => {
+              try {
+                response = JSON.parse(response)
+                if(response.default.trendingSearchesDays[0]) {
+                  if(response.default.trendingSearchesDays[0].trendingSearches){
+                    const { trendingSearchesDays } = response.default
+                    const { trendingSearches } = trendingSearchesDays[0]
+                    totalTimes += trendingSearches.length  // 基础query长度
+                    trendingSearches.forEach(search => {
                       readTimes++
-                      list.push(query.query)
+                      list.push(search.title.query)
+                      const { relatedQueries } = search
+                      totalTimes += relatedQueries.length // relatedQueries长度
+                      relatedQueries.forEach(query => {
+                        readTimes++
+                        list.push(query.query)
+                      })
                     })
-                  })
+                  } 
                 }
+              } catch(e) {
+                console.log(e)
               }
               
               if(readTimes === totalTimes) {
@@ -120,20 +127,22 @@ utils.getRangeDate(beginDate,endDate)
                 console.log(date+'读完,开始去重'+flag)
                 if(flag === dateList.length) {
                   filterList = list.filter((ele,index,self) => self.indexOf(ele) === index) // 数组去重
-                  switch(fileType) {
-                    case 'csv' : 
-                      filterList.forEach(item => {
-                        dailyWriteStream.write(item + os.EOL)
-                      })
-                      console.log(32132131)
-                      res.send('ok')
-                      break;
-                    case 'js':{
-                      dailyWriteStream.write('exports.keys='+JSON.stringify(filterList,'','\t'))
-                      res.send('ok')
-                      break;
-                     }
-                    }
+                  outputFile(fileType,filterList,dailyWriteStream,res)
+                  
+                  // switch(fileType) {
+                  //   case 'csv' : 
+                  //     filterList.forEach(item => {
+                  //       dailyWriteStream.write(item + os.EOL)
+                  //     })
+                  //     console.log(32132131)
+                  //     res.send('ok')
+                  //     break;
+                  //   case 'js':{
+                  //     dailyWriteStream.write('exports.keys='+JSON.stringify(filterList,'','\t'))
+                  //     res.send('ok')
+                  //     break;
+                  //    }
+                  //   }
                   }
                 }
             }
