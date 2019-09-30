@@ -19,6 +19,7 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
   let jsList = []
 
   let totalList = []
+  let filterList = undefined  // 去重数组
 
   let name = undefined  // 输出文件名
   
@@ -64,10 +65,11 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
 
   
   totalList = totalList.concat(csvList,jsList)
+  filterList = totalList.filter((item,index,array) => array.indexOf(item) === index)  // 去重
 
   switch(outputType) {
     case 'js':{
-      writeStream.write('exports.keys='+JSON.stringify(totalList,'','\t'),err => {
+      writeStream.write('exports.keys='+JSON.stringify(filterList,'','\t'),err => {
         if(!err) {
           res.send('ok')
         }
@@ -75,8 +77,8 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
       break;
     }
     case 'csv' : {
-      totalList.forEach(item => {
-        writeStream.write(item)
+      filterList.forEach(item => {
+        writeStream.write(item + os.EOL)
       })
       res.send('ok')
       break;

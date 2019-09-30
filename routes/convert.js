@@ -44,10 +44,13 @@ router.post('/',upload.array('uploadFiles'),(req,res,next) => {
         break;
       }
     }
+    console.log(1)
 
+    let filterList = list.filter((item,index,array) => array.indexOf(item) === index)
+    console.log(filterList)
     switch(ouputType) {
       case 'js' : {
-        writeStream.write('exports.keys = '+JSON.stringify(list,'','\t'),err => {
+        writeStream.write('exports.keys = '+JSON.stringify(filterList,'','\t'),err => {
           if(!err) {}
         })
         if(fileFlag === length) {
@@ -57,7 +60,7 @@ router.post('/',upload.array('uploadFiles'),(req,res,next) => {
         break;
       }
       case 'csv' : {
-        list.forEach(item => {
+        filterList.forEach(item => {
           writeStream.write(item + os.EOL)
         })
         if(fileFlag === length) {

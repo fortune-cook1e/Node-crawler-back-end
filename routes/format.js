@@ -46,7 +46,6 @@ router.post('/',upload.array('uploadFiles'),(req,res,next) => {
         break;
       }
       case 'amazon':{
-        console.log(txtList)
         txtList = txtList.map(item => {
           return item.split(/\t/)[0].replace(/[\u4e00-\u9fa5]/g,'')
         })
@@ -60,6 +59,13 @@ router.post('/',upload.array('uploadFiles'),(req,res,next) => {
         txtList = txtList.map(item => {
           return item.split(',')[1]
         })
+        txtList.forEach(item => {
+          writeStream.write(item + os.EOL)
+        })
+        break;
+      }
+      case 'sonar' : {
+        txtList = txtList.map(item => item.replace(/\"/g,'').split(';')[0]).splice(8)
         txtList.forEach(item => {
           writeStream.write(item + os.EOL)
         })

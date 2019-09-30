@@ -86,6 +86,7 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
      */
     function getRelated(fileList,name) {
       let readTimes = 0 
+      let successTimes = 0
       let totalTimes = fileList.length // 词汇总量
       
       const writePath = resolve(`../files/related/${name}~related.${outputFileType}`)
@@ -104,6 +105,7 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
                   response = JSON.parse(response)  // 如果用的是 google 则去掉 .text
                   if(response.default) {
                     let list = response.default.rankedList[0].rankedKeyword
+                    successTimes++
                     list.forEach(item => {
                       queryList.push(item.query)
                     })
@@ -119,17 +121,20 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
                   filterList = queryList.filter((ele,index,self) => self.indexOf(ele) === index) // 数组去重
                   switch(outputFileType) {
                     case 'js' : {
+                      console.log(filterList)
+                      console.log('数据总数:'+filterList.length)
                       writeStream.write('exports.keys='+JSON.stringify(filterList,'','\t'))
                       break;
                     }
                     case 'csv': {
-                      console.log(filterList)
+                      console.log('数据总数:'+filterList.length)
                       filterList.forEach(item => {
                         writeStream.write(item + os.EOL)
                       })
                       break;
                     }
                     default : {
+                      console.log('数据总数:'+filterList.length)
                       filterList.forEach(item => {
                         writeStream.write(item + os.EOL)
                       })
@@ -151,17 +156,19 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
                   filterList = queryList.filter((ele,index,self) => self.indexOf(ele) === index) // 数组去重
                   switch(outputFileType) {
                     case 'js' : {
+                      console.log('数据总数:'+filterList.length)
                       writeStream.write('exports.keys='+JSON.stringify(filterList,'','\t'))
                       break;
                     }
                     case 'csv': {
-                      console.log(filterList)
+                      console.log('数据总数:'+filterList.length)
                       filterList.forEach(item => {
                         writeStream.write(item + os.EOL)
                       })
                       break;
                     }
                     default : {
+                      console.log('数据总数:'+filterList.length)
                       filterList.forEach(item => {
                         writeStream.write(item + os.EOL)
                       })
