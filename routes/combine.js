@@ -6,6 +6,7 @@ const path =  require('path')
 const multer = require('multer')
 const upload = multer({dest:'./temp/'})
 const os = require('os')
+const { formatTime } = require('../utils')
 
 function resolve(dir) {
   return path.join(__dirname,dir)
@@ -22,6 +23,7 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
   let filterList = undefined  // 去重数组
 
   let name = undefined  // 输出文件名
+  let time = formatTime()  // 输出时间 作输出名用
   
 
   files.forEach((file,index) => {
@@ -33,7 +35,6 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
     const readPath = file.path
     const readStream = fs.createReadStream(readPath)
     const type = originalname.slice(originalname.indexOf('.')+1,originalname.length)
-
 
     switch(type) {
       case 'js':{
@@ -60,12 +61,13 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
 
   })
 
-  const writePath = resolve(`../files/combine/${name}~combine.${outputType}`)
+  const writePath = resolve(`../files/combine/${time}.${outputType}`)
   const writeStream = fs.createWriteStream(writePath)
 
   
   totalList = totalList.concat(csvList,jsList)
-  filterList = totalList.filter((item,index,array) => array.indexOf(item) === index)  // 去重
+  const reg = new RegExp(/^[a-zA-Z0-9_-\s\.\+\$\(\)\[\]\:\@\/\'\?\%\,\&]*$/)
+  filterList = totalList.filter((item,index,array) => reg.test(item) && array.indexOf(item) === index)
 
   switch(outputType) {
     case 'js':{

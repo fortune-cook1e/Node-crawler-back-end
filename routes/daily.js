@@ -51,6 +51,11 @@ function resolve(dir) {
 }
 
 
+router.get('/',(req,res,next) => {
+  res.render('daily/index')
+  console.log(req.query)
+})
+
 
 router.post('/',(req,res,next) => {
   let readTimes = 0  // 读取次数

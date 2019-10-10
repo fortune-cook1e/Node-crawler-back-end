@@ -3,7 +3,7 @@ const app = express()
 const ejs = require('ejs')
 const bodyParser = require('body-parser')  // 处理post请求
 const path = require('path')
-const routers = require('./routes/')
+const router = require('./routes/')
 
 
 
@@ -25,12 +25,12 @@ app.all('*',function(req,res,next) {
   }
 })
 
-app.use('/daily',routers.daily)    // 按照日期获取实时趋势
-app.use('/convert',routers.convert)  // csv、js格式文件互转
-app.use('/combine',routers.combine)   // 合并csv或js格式文件
-app.use('/related',routers.related)  // 获取relatedQueries
-app.use('/format',routers.format)    // 格式化搜狗词库
-app.use('/static',routers.static)   // 手动修改路径来获取relatedQueries  针对数据量多的文件
+app.use('/daily',router.daily)    // 按照日期获取实时趋势
+app.use('/convert',router.convert)  // csv、js格式文件互转
+app.use('/combine',router.combine)   // 合并csv或js格式文件
+app.use('/related',router.related)  // 获取relatedQueries
+app.use('/format',router.format)    // 格式化搜狗词库
+app.use('/static',router.static)   // 手动修改路径来获取relatedQueries  针对数据量多的文件
 
 
 

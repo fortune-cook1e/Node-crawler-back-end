@@ -107,6 +107,24 @@ function outputFile(outputFileType,list,writeStream,res) {
   }
 }
 
+/**
+ * @description 生成一个格式化时间
+ * @returns 返回时间字符串
+ */
+function formatTime() {
+  let date = new Date()
+  let timeStr = undefined
+
+  let year = date.getFullYear()
+  let month = date.getMonth() + 1
+  let day = date.getDate()
+  let hour = date.getHours()
+  let minute = date.getMinutes()
+  let second = date.getSeconds()
+
+  timeStr = `${year}~${month}~${day}~${hour}~${minute}~${second}`
+  return timeStr
+}
 
 
 
@@ -114,5 +132,6 @@ function outputFile(outputFileType,list,writeStream,res) {
 module.exports = {
   getRelatedQueries,
   getRangeDate,
-  outputFile
+  outputFile,
+  formatTime
 }
