@@ -6,13 +6,17 @@ const path =  require('path')
 const multer = require('multer')
 const upload = multer({dest:'./temp/'})
 const os = require('os')
-const { formatTime } = require('../utils')
+const { formatTime,getClientIp } = require('../utils')
 
 function resolve(dir) {
   return path.join(__dirname,dir)
 }
 
 router.post('/',upload.array('uploadFile'),(req,res,next) => {
+
+  let ip = getClientIp(req)
+  console.log(ip)
+
   const files = req.files
   const outputType = req.body.fileType
 

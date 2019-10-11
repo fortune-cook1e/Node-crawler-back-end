@@ -122,8 +122,28 @@ function formatTime() {
   let minute = date.getMinutes()
   let second = date.getSeconds()
 
-  timeStr = `${year}~${month}~${day}~${hour}~${minute}~${second}`
+  timeStr = `${year}${month}${day}${hour}${minute}${second}`
   return timeStr
+}
+
+/**
+ *
+ * @description 获取用户ip
+ * @param {*} req 请求
+ * @returns
+ */
+function getClientIp(req) {
+  var ip = req.headers['x-forwarded-for'] ||
+  req.ip ||
+  req.connection.remoteAddress ||
+  req.socket.remoteAddress ||
+  req.connection.socket.remoteAddress || '';
+  if(ip.split(',').length > 0 ) {
+    ip = ip.split(',')[0]
+  }
+  ip = ip.substr(ip.lastIndexOf(':')+1,ip.length);
+    console.log("ip:"+ip);
+    return ip
 }
 
 
@@ -133,5 +153,6 @@ module.exports = {
   getRelatedQueries,
   getRangeDate,
   outputFile,
-  formatTime
+  formatTime,
+  getClientIp
 }
