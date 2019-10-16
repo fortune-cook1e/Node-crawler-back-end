@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Export Demo</title>
+</head>
+<body>
+  <h1>this is Export Demo</h1>
+  <button id="btn">
+    导出数据
+  </button>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <script>
+    let btn = document.getElementById('btn')
+    btn.onclick = function(){
+      axios.post('/export-excel')
+        .then(res => {
+          console.log(res)
+        }).catch(e => {
+          console.log(e)
+        })
+    }
+  </script>
+</body>
+</html>

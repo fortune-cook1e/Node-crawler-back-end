@@ -4,6 +4,7 @@ const daily = require('./daily')
 const format = require('./format')
 const related = require('./related')
 const static = require('./static')
+const exportExcel = require('./exportExcel')
 
 
 module.exports = {
@@ -12,5 +13,6 @@ module.exports = {
   daily:daily,
   format:format,
   related:related,
-  static:static
+  static:static,
+  exportExcel:exportExcel
 }

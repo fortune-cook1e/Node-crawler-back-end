@@ -31,6 +31,7 @@ app.use('/combine',router.combine)   // 合并csv或js格式文件
 app.use('/related',router.related)  // 获取relatedQueries
 app.use('/format',router.format)    // 格式化搜狗词库
 app.use('/static',router.static)   // 手动修改路径来获取relatedQueries  针对数据量多的文件
+app.use('/export-excel',router.exportExcel)
 
 
 

@@ -95,14 +95,14 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
 
       // 遍历数组获取related
       fileList.forEach(item => {
-        // superAgent.get(url+'?keyword='+item)
-          googleTrends.relatedQueries({keyword:item})
+        superAgent.get(url+'?keyword='+item)
+          // googleTrends.relatedQueries({keyword:item})
               .then(response => {
-
                 try {
                   readTimes++ // 读完一个单词就 readTimes ++ 直到与 totalTimes相同
+                  successTimes++
                   console.log(readTimes,totalTimes)
-                  response = JSON.parse(response)  // 如果用的是 google 则去掉 .text
+                  response = JSON.parse(response.text)  // 如果用的是 google 则去掉 .text
                   if(response.default) {
                     let list = response.default.rankedList[0].rankedKeyword
                     successTimes++
@@ -152,7 +152,7 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
                 // 如果 readTimes === totalTimes ，则一个单词读完
                 if(readTimes === totalTimes) {
                   fileFlag++ // 如果一个文件读完 fileFlag++，直到与 filesLength相同
-                  console.log(name+' 文件读完,fileFlag'+fileFlag,filesLength,'开始输出文件')
+                  console.log(name+' 文件读完,fileFlag'+fileFlag,filesLength,'成功次数:'+successTimes+'开始输出文件')
                   filterList = queryList.filter((ele,index,self) => self.indexOf(ele) === index) // 数组去重
                   switch(outputFileType) {
                     case 'js' : {
