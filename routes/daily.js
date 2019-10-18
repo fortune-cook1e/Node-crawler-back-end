@@ -39,7 +39,7 @@ const os = require('os')
 const googleTrends = require('google-trends-api')
 const path = require('path')
 
-const { outputFile } = require('../utils/index')
+const { outputFile,getRangeDate } = require('../utils/index')
 
 /**
  * @description 路径解析
@@ -92,7 +92,7 @@ router.post('/',(req,res,next) => {
     // 可分2个文件
   // const outputRelated = utils.pathResolve(`../outputFiles/related/${beginDate}~${endDate}-related.csv`) // 可修改
   // const relatedWriteStream = fs.createWriteStream(outputRelated)
-utils.getRangeDate(beginDate,endDate)
+getRangeDate(beginDate,endDate)
       .then(dateList => {
         dateList.forEach(date => {
           googleTrends.dailyTrends({
@@ -134,20 +134,21 @@ utils.getRangeDate(beginDate,endDate)
                   filterList = list.filter((ele,index,self) => self.indexOf(ele) === index) // 数组去重
                   outputFile(fileType,filterList,dailyWriteStream,res)
                   
-                  // switch(fileType) {
-                  //   case 'csv' : 
-                  //     filterList.forEach(item => {
-                  //       dailyWriteStream.write(item + os.EOL)
-                  //     })
-                  //     console.log(32132131)
-                  //     res.send('ok')
-                  //     break;
-                  //   case 'js':{
-                  //     dailyWriteStream.write('exports.keys='+JSON.stringify(filterList,'','\t'))
-                  //     res.send('ok')
-                  //     break;
-                  //    }
-                  //   }
+                  switch(fileType) {
+                    case 'csv' : 
+                      filterList.forEach(item => {
+                        dailyWriteStream.write(item + os.EOL)
+                      })
+                      console.log(32132131)
+                      res.send('ok')
+                      break;
+                    case 'js':{
+                      dailyWriteStream.write('exports.keys='+JSON.stringify(filterList,'','\t'))
+                      res.send('ok')
+                      break;
+                     }
+                     default:return 'ok'
+                    }
                   }
                 }
             }

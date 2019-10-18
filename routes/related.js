@@ -95,14 +95,14 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
 
       // 遍历数组获取related
       fileList.forEach(item => {
-        superAgent.get(url+'?keyword='+item)
-          // googleTrends.relatedQueries({keyword:item})
+        // superAgent.get(url+'?keyword='+item)
+          googleTrends.relatedQueries({keyword:item})
               .then(response => {
                 try {
                   readTimes++ // 读完一个单词就 readTimes ++ 直到与 totalTimes相同
                   successTimes++
                   console.log(readTimes,totalTimes)
-                  response = JSON.parse(response.text)  // 如果用的是 google 则去掉 .text
+                  response = JSON.parse(response)  // 如果用的是 google 则去掉 .text
                   if(response.default) {
                     let list = response.default.rankedList[0].rankedKeyword
                     successTimes++
@@ -141,7 +141,9 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
                     }
                   }
                   if(fileFlag === filesLength) {
-                    res.send('ok')
+                    res.json({
+                      length:filterList.length
+                    })
                   }
                 }
 
@@ -175,7 +177,9 @@ router.post('/',upload.array('uploadFile'),(req,res,next) => {
                     }
                   }
                   if(fileFlag === filesLength) {
-                    res.send('ok')
+                    res.json({
+                      length:filterList.length
+                    })
                   }
                 }
               })
